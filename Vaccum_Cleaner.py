@@ -1,55 +1,102 @@
-import random
+def vacuum_world():
+    # initializing goal_state
+    # 0 indicates Clean and 1 indicates Dirty
+    goal_state = {'A': '0', 'B': '0'}
+    cost = 0
 
-# Define environment
-rooms = {
-    'A': random.choice(['Clean', 'Dirty']),
-    'B': random.choice(['Clean', 'Dirty']),
-    'C': random.choice(['Clean', 'Dirty']),
-    'D': random.choice(['Clean', 'Dirty'])
-}
+    location_input = input("Enter Location of Vacuum (A or B): ")  # user_input of location
+    status_input = input("Enter status of " + location_input + " (0=Clean, 1=Dirty): ")  # status of current room
+    status_input_complement = input("Enter status of the other room (0=Clean, 1=Dirty): ")
 
-# Initial position of the agent
-agent_position = random.choice(['A', 'B', 'C', 'D'])
+    print("\nInitial Location Condition: " + str(goal_state))
 
-# Display current state
-def display_state():
-    print(f"Agent is in Room {agent_position}")
-    for room, status in rooms.items():
-        print(f"Room {room}: {status}")
-    print()
+    if location_input == 'A':
+        print("Vacuum is placed in Location A")
 
-# Rule-based agent logic with smart movement
-def vacuum_agent():
-    global agent_position
-    steps = 0
+        if status_input == '1':
+            print("Location A is Dirty.")
+            # suck the dirt and mark it as clean
+            goal_state['A'] = '0'
+            cost += 1  # cost for suck
+            print("Cost for CLEANING A: " + str(cost))
+            print("Location A has been Cleaned.")
 
-    # Keep track of cleaned rooms
-    cleaned_rooms = set()
+            if status_input_complement == '1':  # if B is Dirty
+                print("Location B is Dirty.")
+                print("Moving RIGHT to the Location B. ")
+                cost += 1  # cost for moving right
+                print("COST for moving RIGHT: " + str(cost))
+                # suck the dirt and mark it as clean
+                goal_state['B'] = '0'
+                cost += 1  # cost for suck
+                print("COST for SUCK: " + str(cost))
+                print("Location B has been Cleaned.")
+            else:
+                print("No action " + str(cost))
+                print("Location B is already clean.")
 
-    while len(cleaned_rooms) < 4:
-        display_state()
+        if status_input == '0':
+            print("Location A is already clean")
+            if status_input_complement == '1':  # if B is Dirty
+                print("Location B is Dirty.")
+                print("Moving RIGHT to the Location B.")
+                cost += 1  # cost for moving right
+                print("COST for moving RIGHT: " + str(cost))
+                # suck the dirt and mark it as clean
+                goal_state['B'] = '0'
+                cost += 1  # cost for suck
+                print("Cost for SUCK: " + str(cost))
+                print("Location B has been Cleaned.")
+            else:
+                print("No action " + str(cost))
+                print("Location B is already clean.")
 
-        # Clean current room if dirty
-        if rooms[agent_position] == 'Dirty':
-            print(f" Cleaning Room {agent_position}")
-            rooms[agent_position] = 'Clean'
-            cleaned_rooms.add(agent_position)
-        else:
-            print(f" Room {agent_position} is already clean.")
-            cleaned_rooms.add(agent_position)
+    else:  # Vacuum is placed in location B
+        print("Vacuum is placed in Location B")
 
-        # Decide next move only if not all rooms are clean
-        if len(cleaned_rooms) < 4:
-            # Move to the next room that is still dirty
-            for next_room in ['A', 'B', 'C', 'D']:
-                if next_room not in cleaned_rooms:
-                    agent_position = next_room
-                    break
+        if status_input == '1':
+            print("Location B is Dirty.")
+            # suck the dirt and mark it as clean
+            goal_state['B'] = '0'
+            cost += 1  # cost for suck
+            print("COST for CLEANING: " + str(cost))
+            print("Location B has been Cleaned.")
 
-        steps += 1
-        print(f"Step {steps} complete.\n")
+            if status_input_complement == '1':  # if A is Dirty
+                print("Location A is Dirty.")
+                print("Moving LEFT to the Location A.")
+                cost += 1  # cost for moving left
+                print("COST for moving LEFT: " + str(cost))
+                # suck the dirt and mark it as clean
+                goal_state['A'] = '0'
+                cost += 1  # cost for suck
+                print("COST for SUCK: " + str(cost))
+                print("Location A has been Cleaned.")
+            else:
+                print("No action " + str(cost))
+                print("Location A is already clean.")
 
-    print(" All rooms are clean!")
-    display_state()
+        if status_input == '0':
+            print("Location B is already clean")
+            if status_input_complement == '1':  # if A is Dirty
+                print("Location A is Dirty.")
+                print("Moving LEFT to the Location A.")
+                cost += 1  # cost for moving left
+                print("COST for moving LEFT: " + str(cost))
+                # suck the dirt and mark it as clean
+                goal_state['A'] = '0'
+                cost += 1  # cost for suck
+                print("Cost for SUCK: " + str(cost))
+                print("Location A has been Cleaned.")
+            else:
+                print("No action " + str(cost))
+                print("Location A is already clean.")
 
-vacuum_agent()
+    # done cleaning
+    print("\nGOAL STATE: ")
+    print(goal_state)
+    print("Performance Measurement (Total Cost): " + str(cost))
+
+
+# Run the program
+vacuum_world()
